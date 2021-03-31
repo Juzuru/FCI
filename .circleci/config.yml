@@ -1,12 +1,71 @@
- version: 2.1
-
- orbs:
-  win: circleci/windows@2.2.0
-
- jobs:
-   build:
-     executor: win/default     
-    
-     steps:
-       - checkout
-       - run: dotnet build
+version: 2.1
+commands:
+  nococid-command-start-workflow:
+    steps:
+      - run: curl --header "Content-Type:application/json" --data '' -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?sprint_id=a896cb01-fc07-4734-9062-08d8f46f572e&branch_id=c049796c-bbed-4f0d-2d02-08d8f4954d62&number_of_jobs=2&circle_workflow_id=${CIRCLE_WORKFLOW_ID}"
+  nococid-command-job-done:
+    steps:
+      - run:
+          when: always
+          command: curl --header "Content-Type:application/json" --data '' -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/job-done?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&circle_job_num=${CIRCLE_BUILD_NUM}&stage=${CIRCLE_STAGE}&gh_username=${CIRCLE_PROJECT_USERNAME}&gh_repository=${CIRCLE_PROJECT_REPONAME}"
+  abc:
+    steps:
+      - run: abcxyz
+jobs:
+  nococid-start-workflow:
+    machine:
+      image: windows-server-2019-vs2019:stable
+    resource_class: windows.medium
+    steps:
+    - nococid-command-start-workflow
+  build:
+    machine:
+      image: windows-server-2019-vs2019:stable
+    resource_class: windows.medium
+    steps:
+    - checkout
+    - run:
+        name: "Build"
+        command: dotnet build ./CalculatorVS
+    - store_artifacts:
+        path: ./CalculatorVS/bin/Debug/netcoreapp3.1
+        destination: BuiltFile
+  test:
+    machine:
+      image: windows-server-2019-vs2019:stable
+    resource_class: windows.medium
+    steps:
+    - checkout
+    - run:
+        name: "Test"
+        command: |
+            dotnet build ./NUnit.Test
+            dotnet test ./NUnit.Test --no-build --logger "trx"
+    - run:
+        shell: powershell.exe -ExecutionPolicy Bypass
+        name: "Test Results"
+        when: always
+        command: |
+            dotnet tool install -g trx2junit
+            trx2junit ./NUnit.Test/TestResults/*.trx
+    - store_test_results:
+        path: ./NUnit.Test/TestResults
+    - store_artifacts:
+        path: ./NUnit.Test/TestResults
+        destination: TestResults
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build:
+          requires:
+            - nococid-start-workflow
+          post-steps:
+            - nococid-command-job-done
+      - test:
+          requires:
+            - nococid-start-workflow
+            - build
+          post-steps:
+            - nococid-command-job-done
+      - nococid-start-workflow
