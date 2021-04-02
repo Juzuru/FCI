@@ -2,7 +2,7 @@ version: 2.1
 commands:
   nococid-command-start-workflow:
     steps:
-      - run: curl --header "Content-Type:application/json" --data '' -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?sprint_id=a896cb01-fc07-4734-9062-08d8f46f572e&branch_id=c049796c-bbed-4f0d-2d02-08d8f4954d62&number_of_jobs=2&circle_workflow_id=${CIRCLE_WORKFLOW_ID}"
+      - run: curl --header "Content-Type:application/json" --data '' -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?sprint_id=80222cf8-8774-401a-6903-08d8f5cd6a8d&number_of_jobs=2&gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}"
   nococid-command-job-done:
     steps:
       - run:
