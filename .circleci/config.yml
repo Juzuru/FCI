@@ -1,40 +1,18 @@
 version: 2.1
 commands:
-  nococid-command-start-workflow:
+  nococid-start-workflow-command:
     steps:
-      - run: curl --header "Content-Type:application/json" --data '' -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?sprint_id=80222cf8-8774-401a-6903-08d8f5cd6a8d&number_of_jobs=2&gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}"
-  nococid-command-job-done:
+      - run: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}" --header "Content-Type:application/json" --data '{"ProjectId":"a000d4de-a908-4b0e-d910-08d8ff57e5df","TotalJob":1,"StagesAndNames":[{"StageCode":3,"StageName":"1-test"}]}'
+  nococid-start-job-command:
     steps:
-      - run:
-          when: always
-          command: curl --header "Content-Type:application/json" --data '' -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/job-done?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&circle_job_num=${CIRCLE_BUILD_NUM}&stage=${CIRCLE_STAGE}&gh_username=${CIRCLE_PROJECT_USERNAME}&gh_repository=${CIRCLE_PROJECT_REPONAME}"
-  abc:
-    steps:
-      - run: abcxyz
+      - run: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-job?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&circle_job_num=${CIRCLE_BUILD_NUM}&stage=${CIRCLE_STAGE}&gh_username=${CIRCLE_PROJECT_USERNAME}&gh_repository=${CIRCLE_PROJECT_REPONAME}" --header "Content-Type:application/json" --data ''
 jobs:
-  nococid-start-workflow:
+  1-test:
     machine:
       image: windows-server-2019-vs2019:stable
     resource_class: windows.medium
     steps:
-    - nococid-command-start-workflow
-  build:
-    machine:
-      image: windows-server-2019-vs2019:stable
-    resource_class: windows.medium
-    steps:
-    - checkout
-    - run:
-        name: "Build"
-        command: dotnet build ./CalculatorVS
-    - store_artifacts:
-        path: ./CalculatorVS/bin/Debug/netcoreapp3.1
-        destination: BuiltFile
-  test:
-    machine:
-      image: windows-server-2019-vs2019:stable
-    resource_class: windows.medium
-    steps:
+    - nococid-start-job-command
     - checkout
     - run:
         name: "Test"
@@ -43,7 +21,7 @@ jobs:
             dotnet test ./NUnit.Test --no-build --logger "trx"
     - run:
         shell: powershell.exe -ExecutionPolicy Bypass
-        name: "Test Results"
+        name: "Parse Test Results"
         when: always
         command: |
             dotnet tool install -g trx2junit
@@ -53,19 +31,17 @@ jobs:
     - store_artifacts:
         path: ./NUnit.Test/TestResults
         destination: TestResults
+  nococid-start-workflow:
+    machine:
+      image: windows-server-2019-vs2019:stable
+    resource_class: windows.medium
+    steps:
+    - nococid-start-workflow-command
 workflows:
-  version: 2
+  version: 2.1
   workflow:
     jobs:
-      - build:
+      - 1-test:
           requires:
             - nococid-start-workflow
-          post-steps:
-            - nococid-command-job-done
-      - test:
-          requires:
-            - nococid-start-workflow
-            - build
-          post-steps:
-            - nococid-command-job-done
       - nococid-start-workflow
