@@ -27,7 +27,7 @@ namespace NUnit.Test
         {
             Assert.AreEqual(4, _cal.Add(2, 2));
             Assert.AreEqual(3, _cal.Add(2, 2));
-            Assert.AreEqual(4, _cal.Add(2, 2));
+            Assert.AreEqual(0, _cal.Add(2, 2));
         }
 
         [Test]
