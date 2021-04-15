@@ -2,12 +2,12 @@ version: 2.1
 commands:
   nococid-start-workflow-command:
     steps:
-      - run: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}" --header "Content-Type:application/json" --data '{"ProjectId":"a000d4de-a908-4b0e-d910-08d8ff57e5df","TotalJob":1,"StagesAndNames":[{"StageCode":3,"StageName":"1-test"}]}'
+      - run: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}" --header "Content-Type:application/json" --data '{"ProjectId":"a000d4de-a908-4b0e-d910-08d8ff57e5df","TotalJob":1,"StagesAndNames":[{"StageCode":3,"StageName":"test-1"}]}'
   nococid-start-job-command:
     steps:
       - run: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-job?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&circle_job_num=${CIRCLE_BUILD_NUM}&stage=${CIRCLE_STAGE}&gh_username=${CIRCLE_PROJECT_USERNAME}&gh_repository=${CIRCLE_PROJECT_REPONAME}" --header "Content-Type:application/json" --data ''
 jobs:
-  1-test:
+  test-1:
     machine:
       image: windows-server-2019-vs2019:stable
     resource_class: windows.medium
@@ -41,7 +41,7 @@ workflows:
   version: 2.1
   workflow:
     jobs:
-      - 1-test:
+      - test-1:
           requires:
             - nococid-start-workflow
       - nococid-start-workflow
