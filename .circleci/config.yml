@@ -13,7 +13,7 @@ commands:
   nococid-end-job-command:
     steps:
       - run:
-          name: "Trigger end job to Nococid"
+          when: always          name: "Trigger end job to Nococid"
           command: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/end-job?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&circle_job_num=${CIRCLE_BUILD_NUM}&stage=${CIRCLE_STAGE}&gh_username=${CIRCLE_PROJECT_USERNAME}&gh_repository=${CIRCLE_PROJECT_REPONAME}" --header "Content-Type:application/json" --data ''
 jobs:
   test-1:
