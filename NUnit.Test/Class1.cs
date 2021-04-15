@@ -19,6 +19,7 @@ namespace NUnit.Test
         public void OnePlusOneEqualTwo()
         {
             Assert.AreEqual(2, _cal.Add(1, 1));
+            Assert.AreEqual(3, _cal.Add(1, 1));
         }
 
         [Test]
