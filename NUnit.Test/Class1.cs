@@ -44,5 +44,11 @@ namespace NUnit.Test
         {
             Assert.AreEqual(7, _cal.Add(4, 3));
         }
+        
+        [Test]
+        public void FourPlusFourEqualEight()
+        {
+            Assert.AreEqual(7, _cal.Add(4, 4));
+        }
     }
 }
