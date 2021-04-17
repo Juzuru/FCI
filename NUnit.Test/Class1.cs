@@ -32,5 +32,11 @@ namespace NUnit.Test
         {
             Assert.AreEqual(5, _cal.Add(4, 1));
         }
+
+        [Test]
+        public void FourPlusTwoEqualSix()
+        {
+            Assert.AreEqual(6, _cal.Add(4, 2));
+        }
     }
 }
