@@ -1,0 +1,41 @@
+2.0
+commands:
+  nococid-start-workflow-command:
+    steps:
+      - run:
+          name: "Trigger start workflow to Nococid"
+          command: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}" --header "Content-Type:application/json" --data '{"ProjectId":"021ee2ca-9c4e-4d8e-39c4-08d92457d752","TotalJob":2,"StagesAndNames":[{"StageCode":2,"StageName":"build-1"}]}'
+  nococid-start-job-command:
+    steps:
+      - run:
+          name: "Trigger start job to Nococid"
+          command: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-job?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&stage=${CIRCLE_STAGE}&gh_username=${CIRCLE_PROJECT_USERNAME}" --header "Content-Type:application/json" --data ''
+  nococid-end-job-command:
+    steps:
+      - run:
+          when: always
+          name: "Trigger end job to Nococid"
+          command: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/end-job?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&circle_job_num=${CIRCLE_BUILD_NUM}&stage=${CIRCLE_STAGE}&gh_username=${CIRCLE_PROJECT_USERNAME}&gh_repository=${CIRCLE_PROJECT_REPONAME}" --header "Content-Type:application/json" --data ''
+jobs:
+  build-1:
+    Machine:
+      Name: Value
+    resource_class: abcxyz
+    steps:
+    - nococid-start-job-command
+wadjaio
+    - nococid-end-job-command
+  nococid-start-workflow:
+    machine:
+      image: windows-server-2019-vs2019:stable
+    resource_class: windows.medium
+    steps:
+    - nococid-start-workflow-command
+workflows:
+  2.0
+  workflow:
+    jobs:
+      - build-1:
+          requires:
+            - nococid-start-workflow
+      - nococid-start-workflow
