@@ -26,7 +26,7 @@ jobs:
     - checkout
     - run:
         name: "Build Project"
-        command: dotnet build ./Manage_Projects_API/Manage_Projects_API.csproj -o Builds
+        command: dotnet build ./Manage_Projects_API/Manage_Projects_API.csproj -o app-build
     - run:
         shell: powershell.exe -ExecutionPolicy Bypass
         name: "New Folder"
