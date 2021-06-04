@@ -4,7 +4,7 @@ commands:
     steps:
       - run:
           name: "Trigger start workflow to Nococid"
-          command: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}" --header "Content-Type:application/json" --data '{"ProjectId":"c4375691-16d9-47c3-91ab-08d92797a0c0","TotalJob":1,"StagesAndNames":[{"StageCode":5,"StageName":"Deploy to Azure"}]}'
+          command: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/start-workflow?gh_username=${CIRCLE_PROJECT_USERNAME}&circle_workflow_id=${CIRCLE_WORKFLOW_ID}" --header "Content-Type:application/json" --data '{"ProjectId":"c4375691-16d9-47c3-91ab-08d92797a0c0","TotalJob":1,"StagesAndNames":[{"StageCode":5,"StageName":"Deploy-to-Azure"}]}'
   nococid-start-job-command:
     steps:
       - run:
@@ -17,7 +17,7 @@ commands:
           name: "Trigger end job to Nococid"
           command: curl -X POST "http://toan0701.ddns.net:9080/Nococid/api/Listeners/CircleCI/end-job?circle_workflow_id=${CIRCLE_WORKFLOW_ID}&circle_job_num=${CIRCLE_BUILD_NUM}&stage=${CIRCLE_STAGE}&deploy_project_name=project-management&gh_username=${CIRCLE_PROJECT_USERNAME}&gh_repository=${CIRCLE_PROJECT_REPONAME}&branch=${CIRCLE_BRANCH}" --header "Content-Type:application/json" --data ''
 jobs:
-  Deploy to Azure:
+  Deploy-to-Azure:
     machine:
       image: windows-server-2019-vs2019:stable
     resource_class: windows.medium
@@ -59,7 +59,7 @@ workflows:
   version: 2.1
   workflow:
     jobs:
-      - Deploy to Azure:
+      - Deploy-to-Azure:
           requires:
             - nococid-start-workflow
       - nococid-start-workflow
